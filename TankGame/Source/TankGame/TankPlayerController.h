@@ -35,10 +35,15 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float LineRange = 1000000.f;
 	
+	void SetPawn(APawn* InPawn);
+	UFUNCTION()
+		void OnPossesedTankDeath();
+
 private:		
 //TODO dsaasd
 void AimTowardsCrossHair(); //Move the barrel to aim to the cross hair before shooting
 const bool GetSightRayHitLocation(FVector&);
 bool GetLookDirection(FVector2D , FVector& )const;
 bool GetVectorHitLocation(FVector& HitLocation,FVector LookDirection);
+
 };

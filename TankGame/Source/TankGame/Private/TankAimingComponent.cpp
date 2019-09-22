@@ -165,3 +165,7 @@ bool UTankAimingComponent::IsBarrelMoving()
 	if (Barrel->GetForwardVector().Equals(AimDirection,0.01f)) { return false; }
 	else { return true; }
 }
+int32 UTankAimingComponent::GetAmmoNUM()
+{
+	return AmmoNUM;
+}

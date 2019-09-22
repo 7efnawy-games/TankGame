@@ -2,7 +2,7 @@
 
 #include "TankPlayerController.h"
 #include"TankAimingComponent.h"
-#include"Tank.h"
+#include"Tank.h"//So We Can Implement on Death
 
 void ATankPlayerController::Tick(float DeltaTime)
 {
@@ -19,7 +19,7 @@ bool ATankPlayerController::GetVectorHitLocation(FVector& HitLocation, FVector L
 	
 	//Line Trace Function
 	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, End,
-		ECollisionChannel::ECC_Visibility
+		ECollisionChannel::ECC_Camera
 		))
 	{
 		
@@ -55,6 +55,22 @@ const bool  ATankPlayerController::GetSightRayHitLocation(FVector &HitLocation)
 	}
 	
 }
+void ATankPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	auto PossesedTank = Cast<ATank>(InPawn);
+	if (ensure(PossesedTank))
+	{
+		PossesedTank->OnDeath.AddUniqueDynamic(this, &ATankPlayerController::OnPossesedTankDeath);
+	}
+}
+void ATankPlayerController::OnPossesedTankDeath()
+{
+	//UE_LOG(LogTemp,Warning,TEXT("Player Controller Tank is Dead"))
+	this->StartSpectatingOnly();
+}
+
 void ATankPlayerController::AimTowardsCrossHair()
 {
 

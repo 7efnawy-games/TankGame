@@ -54,8 +54,10 @@ public:
 		void Fire();
 	EFiringState GetFiringState() const;
 
-	UPROPERTY(BLueprintReadOnly, Category = Ammo)
-	int AmmoNUM = 2;
+	UFUNCTION(BluePrintCallable, Category = Firing)
+	int32	GetAmmoNUM();
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	int32 AmmoNUM = 2;
 
 protected:
 	// Called when the game starts

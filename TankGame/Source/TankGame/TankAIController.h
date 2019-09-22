@@ -21,10 +21,15 @@ private:
 	
 	virtual void Tick(float) override;
 	virtual void BeginPlay() override;
-
+	virtual void SetPawn(APawn* InPawn) override;
 	
 public:
 	UTankAimingComponent* AimingComponent = nullptr;
 	UPROPERTY(EditAnyWhere, Category = Settings)
-		float AcceptanceRadius = 30000.f;//How CLose Can the AI Tank Get
+		float AcceptanceRadius = 30000.f;//How Close Can the AI Tank Get
+	
+	UFUNCTION()
+	void OnPossesedTankDeath();
+	 
+
 };
