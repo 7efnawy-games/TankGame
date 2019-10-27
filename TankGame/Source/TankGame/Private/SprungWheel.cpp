@@ -10,17 +10,39 @@ ASprungWheel::ASprungWheel()
 	
 	PrimaryActorTick.bCanEverTick = true;
 	
-	MassWheelConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("PhysicsConstraint"));
-	SetRootComponent(MassWheelConstraint);
+	PrimaryActorTick.TickGroup =TG_PostPhysics;
 
 
 
-	Wheel = CreateDefaultSubobject<UStaticMeshComponent>(FName("Wheel"));
-	Wheel->SetupAttachment(MassWheelConstraint);
+
+	MassAxelConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("Mass Axel Constraint"));
+	SetRootComponent(MassAxelConstraint);
+
+	Axel = CreateDefaultSubobject<USphereComponent>(FName("Axel"));
+	Axel->SetupAttachment(MassAxelConstraint);
+
+	Wheel = CreateDefaultSubobject<USphereComponent>(FName("Wheel"));
+	Wheel->SetupAttachment(Axel);
+
+	AxelWheelConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("Axel Wheel Constraint"));
+	AxelWheelConstraint->SetupAttachment(Axel);
+
+	
+
+
 
 	
 }
+void  ASprungWheel::AddDrivingForce(float ForceMagnitude)
+{
+	TotalForceManitudeThisFrame += ForceMagnitude;
 
+};
+void ASprungWheel::OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ON HIT %f, sisi %f"), GetWorld()->GetTimeSeconds(), TotalForceManitudeThisFrame)
+		ApplyForce();
+}
 // Called when the game starts or when spawned
 void ASprungWheel::BeginPlay()
 {
@@ -29,6 +51,8 @@ void ASprungWheel::BeginPlay()
 
 	//AttachToComponent();
 	SetupConstraints();
+	Wheel->SetNotifyRigidBodyCollision(true);
+	Wheel->OnComponentHit.AddDynamic(this,&ASprungWheel::OnHit);
 
 }
 void ASprungWheel::SetupConstraints()
@@ -41,18 +65,28 @@ void ASprungWheel::SetupConstraints()
 		if (!BodyRoot) { return; }
 		
 		//To Fix That Bug
-		FVector SpawnLocation= GetRootComponent()->GetAttachParent()->GetComponentLocation();
-		MassWheelConstraint->SetWorldLocation(SpawnLocation);
-		Wheel->SetWorldLocation(SpawnLocation - FVector(0, 0, 150.0));
+		MassAxelConstraint->SetConstrainedComponents(BodyRoot, NAME_None, Axel, NAME_None);
+		AxelWheelConstraint->SetConstrainedComponents(Axel, NAME_None, Wheel, NAME_None);
+	
+		
 
-		MassWheelConstraint->SetConstrainedComponents(Wheel, NAME_None, BodyRoot, NAME_None);
+
+	
 
 	}
+}
+void ASprungWheel::ApplyForce()
+{
+	Wheel->AddForce(Axel->GetForwardVector() * TotalForceManitudeThisFrame);
 }
 // Called every frame
 void ASprungWheel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (GetWorld()->TickGroup == TG_PostPhysics)
+	{
+		TotalForceManitudeThisFrame = 0;
+	}
+	
 }
 

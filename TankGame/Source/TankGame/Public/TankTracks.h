@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
-
+#include"SprungWheel.h"
 #include "TankTracks.generated.h"
 
 /**
@@ -19,16 +19,14 @@ public:
 	virtual void BeginPlay() override;
 	UTankTracks();
 	
-	void ApplySidewaysForce();
+	
 
 	UFUNCTION(BluePrintCallable,Category=Input)
 		void SetThrottle(float Throttle);
 		//Max force Per Track in Newton
 private:
-	
-	float CurrentThrottle = 0;
+	TArray<class ASprungWheel*> GetWheels() const;
+	//float CurrentThrottle = 0.f;
 	UPROPERTY(EditDefaultsOnly)
 			float TrackMaxDrivingForce = 40000000.0;
-		UFUNCTION()
-			void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

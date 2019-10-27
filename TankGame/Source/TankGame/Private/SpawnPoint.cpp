@@ -21,13 +21,13 @@ void USpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto NewActor = GetWorld()->SpawnActorDeferred<AActor>(SpawnClass,GetComponentTransform());
-	if (!NewActor) { return; }
-	UE_LOG(LogTemp,Warning,TEXT("After Spawn %s"),*NewActor->GetName())
+	SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(SpawnClass,GetComponentTransform());
+	if (!SpawnedActor) { return; }
+	UE_LOG(LogTemp,Warning,TEXT("After Spawn %s"),*SpawnedActor->GetName())
 
 	
-	NewActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
-	UGameplayStatics::FinishSpawningActor(NewActor, GetComponentTransform());
+		SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
+	UGameplayStatics::FinishSpawningActor(SpawnedActor, GetComponentTransform());
 	// ... 
 	
 }
